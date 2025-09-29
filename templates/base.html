@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} - {% endif %}{{ settings.store_name if settings else 'Baign Mart' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af',
+                        accent: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Global Sale Banner -->
+    {% if settings %}
+        <div class="bg-red-600 text-white py-2 text-center text-sm font-bold">
+            {{ settings.banner_text }} - Up to {{ settings.global_discount_percent }}% OFF
+        </div>
+    {% endif %}
+    
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="{{ url_for('main.index') }}" class="flex items-center">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="h-10 w-10 object-contain mr-2">
+                    <span class="text-2xl font-bold text-primary">{{ settings.store_name if settings else 'Baign Mart' }}</span>
+                </a>
+                <nav class="hidden md:flex space-x-4">
+                    <a href="{{ url_for('main.index') }}" class="text-gray-700 hover:text-primary font-medium">Home</a>
+                    <!-- Course Categories Menu -->
+                    <div class="relative group">
+                        <a href="#" class="text-gray-700 hover:text-primary font-medium flex items-center">
+                            Courses <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </a>
+                        <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden group-hover:block z-50">
+                            <a href="{{ url_for('main.all_categories') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">All Categories</a>
+                            <!-- Specific categories as requested -->
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Andrew Tate Course</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Grant Cardone Course</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dating Course</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Fitness Course</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Business Course</a>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('main.my_orders') }}" class="text-gray-700 hover:text-primary font-medium">My Orders</a>
+                    <a href="{{ url_for('main.about') }}" class="text-gray-700 hover:text-primary font-medium">About</a>
+                    <a href="{{ url_for('main.privacy') }}" class="text-gray-700 hover:text-primary font-medium">Privacy</a>
+                    <a href="{{ url_for('main.terms') }}" class="text-gray-700 hover:text-primary font-medium">Terms</a>
+                </nav>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <a href="{{ url_for('main.cart') }}" class="relative text-gray-700 hover:text-primary">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    {% if session.cart %}
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {{ session.cart | length }}
+                        </span>
+                    {% endif %}
+                </a>
+                
+                {% if session.admin_logged_in %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-gray-700 hover:text-primary">
+                        <i class="fas fa-tachometer-alt"></i> Admin
+                    </a>
+                    <a href="{{ url_for('admin.logout') }}" class="text-gray-700 hover:text-primary">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-white border-t">
+        <div class="container mx-auto px-4 py-2 flex justify-around">
+            <a href="{{ url_for('main.index') }}" class="text-gray-700 hover:text-primary py-2">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{{ url_for('main.my_orders') }}" class="text-gray-700 hover:text-primary py-2">
+                <i class="fas fa-file-invoice"></i>
+            </a>
+            <a href="{{ url_for('main.all_categories') }}" class="text-gray-700 hover:text-primary py-2">
+                <i class="fas fa-graduation-cap"></i>
+            </a>
+            <a href="{{ url_for('main.cart') }}" class="text-gray-700 hover:text-primary py-2 relative">
+                <i class="fas fa-shopping-cart"></i>
+                {% if session.cart %}
+                    <span class="absolute top-0 right-4 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                        {{ session.cart | length }}
+                    </span>
+                {% endif %}
+            </a>
+            {% if session.admin_logged_in %}
+                <a href="{{ url_for('admin.dashboard') }}" class="text-gray-700 hover:text-primary py-2">
+                    <i class="fas fa-tachometer-alt"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-4 mt-4">
+                {% for category, message in messages %}
+                    <div class="p-4 mb-2 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">{{ settings.store_name if settings else 'Baign Mart' }}</h3>
+                    <p class="text-gray-300">Your one-stop destination for quality products at amazing prices.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('main.index') }}" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-gray-300 hover:text-white">About Us</a></li>
+                        <li><a href="{{ url_for('main.privacy') }}" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="{{ url_for('main.terms') }}" class="text-gray-300 hover:text-white">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><i class="fas fa-envelope mr-2"></i> {{ settings.contact_email if settings else 'support@baignmart.com' }}</li>
+                        <li><i class="fas fa-phone mr-2"></i> {{ settings.contact_phone if settings else '+91 XXXX-XXXX-XX' }}</li>
+                        <li><i class="fab fa-telegram mr-2"></i> @wctw_private</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Newsletter</h3>
+                    <p class="text-gray-300 mb-2">Subscribe for updates and offers</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-3 py-2 rounded-l text-gray-800 w-full">
+                        <button class="bg-primary text-white px-4 py-2 rounded-r">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2025 {{ settings.store_name if settings else 'Baign Mart' }}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Handle dropdown menus
+        document.addEventListener('DOMContentLoaded', function() {
+            // For dropdown menus
+            const dropdowns = document.querySelectorAll('.group');
+            dropdowns.forEach(dropdown => {
+                const dropdownMenu = dropdown.querySelector('div');
+                
+                dropdown.addEventListener('mouseenter', function() {
+                    dropdownMenu.classList.remove('hidden');
+                });
+                
+                dropdown.addEventListener('mouseleave', function() {
+                    dropdownMenu.classList.add('hidden');
+                });
+            });
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

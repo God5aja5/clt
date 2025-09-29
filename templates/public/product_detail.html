@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm text-gray-600">
+        <li><a href="{{ url_for('main.index') }}" class="hover:text-blue-600">Home</a></li>
+        <li>/</li>
+        <li class="text-gray-900">{{ product.title }}</li>
+    </ol>
+</nav>
+
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+        <!-- Product Images Carousel -->
+        <div class="space-y-4">
+            <div class="bg-gray-100 rounded-lg p-4 flex items-center justify-center h-96">
+                {% if product.images %}
+                    <img id="mainImage" src="{{ url_for('static', filename='uploads/' + product.images[0].filename) }}" 
+                         alt="{{ product.title }}" class="max-h-80 object-contain">
+                {% else %}
+                    <div class="text-center text-gray-500">
+                        <i class="fas fa-image text-6xl mb-4"></i>
+                        <p>No images available</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if product.images|length > 1 %}
+            <div class="flex space-x-2 overflow-x-auto">
+                {% for image in product.images %}
+                    <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" 
+                         alt="{{ product.title }}" 
+                         class="w-20 h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-500 thumbnail-image"
+                         data-full="{{ url_for('static', filename='uploads/' + image.filename) }}">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Product Details -->
+        <div class="space-y-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product.title }}</h1>
+                <div class="flex items-center space-x-4 mb-4">
+                    <span class="inline-block bg-red-100 text-red-800 text-sm px-3 py-1 rounded-full font-semibold">
+                        {{ settings.banner_text }}
+                    </span>
+                    {% if product.featured %}
+                    <span class="inline-block bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full font-semibold">
+                        Featured
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="border-t border-b py-4">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <div class="text-3xl font-bold text-red-600">₹{{ "%.2f"|format(product.get_discounted_price(settings.global_discount_percent)) }}</div>
+                        <div class="text-lg text-gray-500 line-through">₹{{ "%.2f"|format(product.price_inr) }}</div>
+                    </div>
+                    <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                        {{ settings.global_discount_percent }}% OFF
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h2 class="text-xl font-bold mb-3">Description</h2>
+                <p class="text-gray-700">{{ product.description }}</p>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <form method="POST" action="{{ url_for('main.add_to_cart') }}" class="flex items-center space-x-4">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div class="flex items-center border rounded-lg">
+                        <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100" onclick="decreaseQuantity()">-</button>
+                        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock if product.stock else 999 }}" 
+                               class="w-16 text-center border-x border-gray-300" id="quantityInput">
+                        <button type="button" class="px-3 py-2 text-gray-600 hover:bg-gray-100" onclick="increaseQuantity()">+</button>
+                    </div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center">
+                        <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                    </button>
+                </form>
+            </div>
+            
+            <div class="border-t pt-4">
+                <h3 class="font-bold mb-2">Product Details:</h3>
+                <ul class="text-gray-700 space-y-1">
+                    <li><span class="font-medium">Views:</span> {{ product.views }}</li>
+                    {% if product.stock %}
+                    <li><span class="font-medium">Stock:</span> {{ product.stock }} available</li>
+                    {% else %}
+                    <li><span class="font-medium">Stock:</span> In stock</li>
+                    {% endif %}
+                    <li><span class="font-medium">Added on:</span> {{ product.created_at.strftime('%B %d, %Y') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products -->
+{% if related_products %}
+<div class="mt-12">
+    <h2 class="text-2xl font-bold mb-6">Related Products</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for related_product in related_products %}
+        <div class="bg-white rounded-lg shadow p-4">
+            <img src="{{ url_for('static', filename='uploads/' + related_product.get_first_image().filename) }}" 
+                 alt="{{ related_product.title }}" class="w-full h-40 object-cover rounded mb-4">
+            <h3 class="font-bold mb-2">{{ related_product.title }}</h3>
+            <div class="flex items-center space-x-2 mb-2">
+                <span class="text-lg font-bold text-red-600">₹{{ "%.2f"|format(related_product.get_discounted_price(settings.global_discount_percent)) }}</span>
+                <span class="text-sm text-gray-500 line-through">₹{{ "%.2f"|format(related_product.price_inr) }}</span>
+            </div>
+            <a href="{{ url_for('main.product_detail', product_id=related_product.id) }}" 
+               class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
+                View Details
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Quantity controls
+    function increaseQuantity() {
+        const input = document.getElementById('quantityInput');
+        const max = input.max ? parseInt(input.max) : 999;
+        let value = parseInt(input.value) || 0;
+        if (value < max) {
+            input.value = value + 1;
+        }
+    }
+    
+    function decreaseQuantity() {
+        const input = document.getElementById('quantityInput');
+        let value = parseInt(input.value) || 1;
+        if (value > 1) {
+            input.value = value - 1;
+        }
+    }
+    
+    // Image thumbnail click handler
+    document.querySelectorAll('.thumbnail-image').forEach(img => {
+        img.addEventListener('click', function() {
+            document.getElementById('mainImage').src = this.getAttribute('data-full');
+        });
+    });
+</script>
+{% endblock %}

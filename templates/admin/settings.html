@@ -1,0 +1,165 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Site Settings</h1>
+
+<form method="POST" class="space-y-6">
+    {{ form.hidden_tag() }}
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            {{ form.store_name.label(class="block text-gray-700 mb-2") }}
+            {{ form.store_name(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            {% if form.store_name.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.store_name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.banner_text.label(class="block text-gray-700 mb-2") }}
+            {{ form.banner_text(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            {% if form.banner_text.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.banner_text.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            {{ form.global_discount_percent.label(class="block text-gray-700 mb-2") }}
+            {{ form.global_discount_percent(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            {% if form.global_discount_percent.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.global_discount_percent.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.theme_name.label(class="block text-gray-700 mb-2") }}
+            {{ form.theme_name(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            {% if form.theme_name.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.theme_name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            {{ form.contact_email.label(class="block text-gray-700 mb-2") }}
+            {{ form.contact_email(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="contact@yoursite.com") }}
+            {% if form.contact_email.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.contact_email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.contact_phone.label(class="block text-gray-700 mb-2") }}
+            {{ form.contact_phone(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="+91 XXXX-XXXX-XX") }}
+            {% if form.contact_phone.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.contact_phone.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mb-6">
+        {{ form.contact_address.label(class="block text-gray-700 mb-2") }}
+        {{ form.contact_address(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", rows="3", placeholder="123 Business Street, City, State - 123456") }}
+        {% if form.contact_address.errors %}
+            <div class="text-red-500 text-sm mt-1">
+                {% for error in form.contact_address.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            {{ form.telegram_bot_token.label(class="block text-gray-700 mb-2") }}
+            {{ form.telegram_bot_token(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="Enter your Telegram bot token") }}
+            {% if form.telegram_bot_token.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.telegram_bot_token.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.admin_telegram_chat_id.label(class="block text-gray-700 mb-2") }}
+            {{ form.admin_telegram_chat_id(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="Enter admin chat ID") }}
+            {% if form.admin_telegram_chat_id.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.admin_telegram_chat_id.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div>
+        {{ form.privacy_policy.label(class="block text-gray-700 mb-2") }}
+        {{ form.privacy_policy(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", rows="10") }}
+        {% if form.privacy_policy.errors %}
+            <div class="text-red-500 text-sm mt-1">
+                {% for error in form.privacy_policy.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div>
+        {{ form.terms.label(class="block text-gray-700 mb-2") }}
+        {{ form.terms(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", rows="10") }}
+        {% if form.terms.errors %}
+            <div class="text-red-500 text-sm mt-1">
+                {% for error in form.terms.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div>
+        {{ form.about.label(class="block text-gray-700 mb-2") }}
+        {{ form.about(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", rows="10") }}
+        {% if form.about.errors %}
+            <div class="text-red-500 text-sm mt-1">
+                {% for error in form.about.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+        Save Settings
+    </button>
+</form>
+{% endblock %}

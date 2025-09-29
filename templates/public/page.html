@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="prose max-w-none">
+    <h1 class="text-3xl font-bold mb-6">{{ title }}</h1>
+    {{ content | safe }}
+</div>
+{% endblock %}

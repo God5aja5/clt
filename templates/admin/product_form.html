@@ -1,0 +1,170 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">{{ title }}</h1>
+
+<form method="POST" enctype="multipart/form-data" class="space-y-6">
+    {{ form.hidden_tag() }}
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            {{ form.title.label(class="block text-gray-700 mb-2") }}
+            {{ form.title(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            {% if form.title.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.title.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.price_inr.label(class="block text-gray-700 mb-2") }}
+            {{ form.price_inr(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            {% if form.price_inr.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.price_inr.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div>
+        {{ form.description.label(class="block text-gray-700 mb-2") }}
+        {{ form.description(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", rows="4") }}
+        {% if form.description.errors %}
+            <div class="text-red-500 text-sm mt-1">
+                {% for error in form.description.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div>
+            {{ form.active.label(class="flex items-center") }}
+            <div class="mt-1">
+                {{ form.active(class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded") }}
+                <span class="ml-2 text-sm text-gray-700">Active</span>
+            </div>
+        </div>
+        
+        <div>
+            {{ form.featured.label(class="flex items-center") }}
+            <div class="mt-1">
+                {{ form.featured(class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded") }}
+                <span class="ml-2 text-sm text-gray-700">Featured</span>
+            </div>
+        </div>
+        
+        <div>
+            {{ form.stock.label(class="block text-gray-700 mb-2") }}
+            {{ form.stock(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="Leave blank for unlimited stock") }}
+            {% if form.stock.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.stock.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.discount_override.label(class="block text-gray-700 mb-2") }}
+            {{ form.discount_override(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="Leave blank to use global discount") }}
+            {% if form.discount_override.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.discount_override.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {{ form.per_product_discount.label(class="block text-gray-700 mb-2") }}
+            {{ form.per_product_discount(class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder="Additional discount for this product") }}
+            {% if form.per_product_discount.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.per_product_discount.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            {% if form.is_hot_product %}
+                {{ form.is_hot_product.label(class="flex items-center") }}
+                <div class="mt-1">
+                    {{ form.is_hot_product(class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded") }}
+                    <span class="ml-2 text-sm text-gray-700">Hot Product</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Category Selection -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label class="block text-gray-700 mb-2">Category</label>
+            <select name="category_id" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">-- Select Category --</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if product and product.category_id == category.id %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <p class="text-sm text-gray-500 mt-1">Select a category for this product</p>
+        </div>
+    </div>
+    </div>
+    
+    <!-- Images Upload -->
+    <div class="bg-gray-50 p-4 rounded-lg">
+        <h3 class="text-lg font-medium mb-3">Product Images</h3>
+        
+        {% if product and product.images %}
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" name="replace_images" value="1" class="mr-2">
+                    <span class="text-sm">Replace existing images (if unchecked, new images will be added)</span>
+                </label>
+            </div>
+            
+            {% if product.images %}
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    {% for image in product.images %}
+                        <div class="relative">
+                            <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" 
+                                 alt="Product Image" class="w-full h-32 object-cover rounded">
+                            <div class="text-xs text-gray-500 mt-1">Position: {{ image.position }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
+        
+        <div class="mb-2">
+            <label class="block text-gray-700 mb-2">Upload 1-4 images (JPG, PNG, GIF)</label>
+            <input type="file" name="images" multiple accept="image/*" 
+                   class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <p class="text-sm text-gray-500 mt-1">Select 1-4 images for this product</p>
+        </div>
+    </div>
+    
+    <div class="flex space-x-4">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+            Save Product
+        </button>
+        <a href="{{ url_for('admin.products') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+            Cancel
+        </a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-8 text-center text-white">
+            <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold mb-2">Order Confirmed!</h1>
+            <p class="text-xl opacity-90">Thank you for your purchase</p>
+        </div>
+        
+        {% if order_id %}
+        <div class="p-6 border-b">
+            <div class="text-center">
+                <p class="text-lg font-semibold text-gray-800 mb-2">Your Order ID:</p>
+                <div class="inline-block bg-blue-50 rounded-lg px-6 py-3">
+                    <p class="text-2xl font-mono font-bold text-blue-700 tracking-wider">{{ order_id }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-3"></i> Next Steps
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold mr-3">
+                                    1
+                                </div>
+                            </div>
+                            <p class="text-gray-600">We've received your order and are preparing it for you</p>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold mr-3">
+                                    2
+                                </div>
+                            </div>
+                            <p class="text-gray-600">Our team will contact you via phone or Telegram shortly</p>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 text-xs font-bold mr-3">
+                                    3
+                                </div>
+                            </div>
+                            <p class="text-gray-600">Complete your purchase using our secure channels</p>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fab fa-telegram text-blue-500 mr-3"></i> Contact Us
+                    </h3>
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-6">
+                        <div class="flex flex-col items-center text-center">
+                            <i class="fab fa-telegram text-5xl text-yellow-300 mb-4"></i>
+                            <h4 class="text-xl font-bold mb-2">Complete Your Order</h4>
+                            <p class="mb-4 opacity-90">Contact us on Telegram with your Order ID</p>
+                            {% if order_id %}
+                            <a href="{{ url_for('main.contact_telegram', order_id=order_id) }}" class="w-full bg-white text-blue-600 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg flex items-center justify-center transition duration-300">
+                                <i class="fab fa-telegram mr-2"></i> Contact for Order: {{ order_id }}
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('main.contact_telegram_general') }}" class="w-full bg-white text-blue-600 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg flex items-center justify-center transition duration-300">
+                                <i class="fab fa-telegram mr-2"></i> Contact on Telegram
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <a href="{{ url_for('main.my_orders') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center transition duration-300">
+                    <i class="fas fa-file-invoice mr-2"></i> View My Orders
+                </a>
+                <a href="{{ url_for('main.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center transition duration-300">
+                    <i class="fas fa-shopping-bag mr-2"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

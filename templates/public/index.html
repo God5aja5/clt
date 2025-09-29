@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hot Products Banner -->
+{% if hot_products %}
+<div class="mb-12">
+    <div class="bg-gradient-to-r from-orange-500 to-red-600 text-white py-8 rounded-lg">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-6 text-center">🔥 Hot Products This Week</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for product in hot_products %}
+                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}" 
+                       class="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-30 transition-all">
+                        {% if product.get_first_image() %}
+                            <img src="{{ url_for('static', filename='uploads/' + product.get_first_image().filename) }}" 
+                                 alt="{{ product.title }}" class="w-16 h-16 object-cover rounded mx-auto mb-2">
+                        {% else %}
+                            <div class="w-16 h-16 bg-white bg-opacity-20 rounded mx-auto mb-2 flex items-center justify-center">
+                                <i class="fas fa-image text-white text-xl"></i>
+                            </div>
+                        {% endif %}
+                        <h3 class="font-bold text-sm mb-1 truncate">{{ product.title }}</h3>
+                        <div class="text-sm font-semibold">₹{{ "%.2f"|format(product.discounted_price) }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Hero Banner -->
+<div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-16 mb-12 rounded-lg">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome to Baign Mart</h1>
+        <p class="text-xl mb-6">Discover amazing products at unbeatable prices</p>
+        <div class="bg-red-600 inline-block px-6 py-3 rounded-full text-lg font-bold animate-pulse">
+            {{ settings.banner_text }} - Up to {{ settings.global_discount_percent }}% OFF
+        </div>
+    </div>
+</div>
+
+<!-- Products Grid -->
+<div class="mb-8">
+    <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Featured Products</h2>
+    
+    {% if products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {% for product in products %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    {% if product.get_first_image() %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.get_first_image().filename) }}" 
+                             alt="{{ product.title }}" class="w-full h-48 object-cover">
+                    {% else %}
+                        <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                            <i class="fas fa-image text-gray-500 text-4xl"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">{{ product.title }}</h3>
+                        <p class="text-gray-600 mb-4 line-clamp-2">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-lg font-bold text-red-600">₹{{ "%.2f"|format(product.get_discounted_price(settings.global_discount_percent)) }}</span>
+                                    <span class="text-sm text-gray-500 line-through">₹{{ "%.2f"|format(product.price_inr) }}</span>
+                                </div>
+                                <div class="text-sm text-green-600 font-semibold">{{ settings.global_discount_percent }}% OFF</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-semibold">
+                                {{ settings.banner_text }}
+                            </span>
+                            <a href="{{ url_for('main.product_detail', product_id=product.id) }}" 
+                               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-box-open text-5xl text-gray-400 mb-4"></i>
+            <h3 class="text-2xl font-bold text-gray-600 mb-2">No Products Available</h3>
+            <p class="text-gray-500">Check back later for new products!</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Features Section -->
+<div class="bg-gray-100 py-12 mt-12 rounded-lg">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose {{ settings.store_name if settings else 'Baign Mart' }}?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tag text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Best Prices</h3>
+                <p class="text-gray-600">Get products at the lowest prices with regular discounts and offers.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Secure Shopping</h3>
+                <p class="text-gray-600">Safe and secure transactions with reliable customer support.</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-truck text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Fast Delivery</h3>
+                <p class="text-gray-600">Quick delivery to your doorstep with tracking information.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

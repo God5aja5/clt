@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">My Orders</h1>
+    
+    {% if user_orders %}
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Products</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for order in user_orders %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ order.order_id }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900">
+                                {% for item in order.processed_products %}
+                                    {% if item.product %}{{ item.product.title }} (x{{ item.quantity }}){% else %}{{ item.title }} (x{{ item.quantity }}){% endif %}
+                                    {% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">₹{{ "%.2f"|format(order.total_amount) }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                 {% if order.status == 'completed' %}bg-green-100 text-green-800
+                                 {% elif order.status == 'contacted' %}bg-blue-100 text-blue-800
+                                 {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ order.status|title }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-shopping-bag text-5xl text-gray-400 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Orders Found</h3>
+            <p class="text-gray-500 mb-4">You haven't placed any orders yet.</p>
+            <a href="{{ url_for('main.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                Browse Products
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Contact Instructions Section -->
+<div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 mb-8">
+    <div class="flex flex-col md:flex-row items-start">
+        <div class="flex-shrink-0 mt-1 mb-4 md:mb-0 md:mr-4">
+            <i class="fab fa-telegram text-2xl text-yellow-300"></i>
+        </div>
+        <div class="flex-grow">
+            <h2 class="text-2xl font-bold mb-2">Complete Your Order</h2>
+            <p class="mb-4">To complete your order, please contact us on Telegram with your Order ID.</p>
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                {% if user_orders %}
+                    {% for order in user_orders %}
+                        <a href="{{ url_for('main.contact_telegram', order_id=order.order_id) }}" class="block bg-blue-700 hover:bg-blue-800 text-white px-4 py-3 rounded-lg font-semibold transition-colors mb-2 flex items-center justify-center">
+                            <i class="fab fa-telegram mr-2"></i> Contact for Order: {{ order.order_id }}
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <a href="{{ url_for('main.contact_telegram_general') }}" class="block bg-blue-700 hover:bg-blue-800 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center">
+                        <i class="fab fa-telegram mr-2"></i> Contact on Telegram
+                    </a>
+                    <p class="text-sm mt-2 text-center">Include your Order ID when contacting us</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Lookup Section -->
+<div class="bg-gray-50 rounded-lg p-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Look Up Another Order</h2>
+    <form method="POST" action="{{ url_for('main.order_lookup') }}" class="flex flex-col sm:flex-row gap-4">
+        <input type="text" name="order_id" placeholder="Enter your Order ID" 
+               class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+            Look Up Order
+        </button>
+    </form>
+</div>
+{% endblock %}
