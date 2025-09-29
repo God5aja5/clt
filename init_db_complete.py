@@ -1,6 +1,6 @@
 import os
 from app import create_app
-from models import db, Category
+from models import db, Category, AdminUser
 
 app, database = create_app()
 
@@ -10,6 +10,23 @@ def init_database():
         # Create all tables
         db.create_all()
         print("Database tables created successfully!")
+        
+        # Check if admin user exists, create default if not
+        admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+        admin_password = os.environ.get('ADMIN_PASSWORD', 'admin @root')
+        
+        existing_admin = AdminUser.query.filter_by(username=admin_username).first()
+        if not existing_admin:
+            # Create default admin user
+            admin_user = AdminUser(
+                username=admin_username,
+                password_hash=admin_password  # The check_password method does direct comparison
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+            print(f"Default admin user '{admin_username}' created successfully!")
+        else:
+            print(f"Admin user '{admin_username}' already exists, skipping creation.")
         
         # Check if categories already exist
         existing_categories = Category.query.all()
